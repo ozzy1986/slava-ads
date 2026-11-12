@@ -1,0 +1,222 @@
+---
+import type { CaseChart } from "@/data/content";
+
+interface Props {
+  chart: CaseChart;
+  accentVar: string;
+}
+const { chart, accentVar } = Astro.props;
+
+const summary =
+  chart.kind === "delta"
+    ? `${chart.caption}. ${chart.bars.map((b) => `${b.label}: ${b.display}`).join(", ")}.`
+    : chart.kind === "compare"
+      ? `${chart.caption}. ${chart.series
+          .map((s) => `${s.label}: ${chart.beforeLabel} ${s.beforeDisplay}, ${chart.afterLabel} ${s.afterDisplay}`)
+          .join("; ")}.`
+      : `${chart.caption}: ${chart.display} ${chart.label}.`;
+
+const maxAbs = chart.kind === "delta" ? Math.max(1, ...chart.bars.map((b) => Math.abs(b.value))) : 1;
+const R = 52;
+const CIRC = 2 * Math.PI * R;
+---
+
+<figure class="case-chart" data-chart-kind={chart.kind} style={`--cc-accent: var(${accentVar});`}>
+  <figcaption class="cc-caption">{chart.caption}</figcaption>
+
+  <div class="cc-graphic" role="img" aria-label={summary}>
+    {
+      chart.kind === "delta" && (
+        <div class="cc-bars" aria-hidden="true">
+          {chart.bars.map((b) => {
+            const half = (Math.abs(b.value) / maxAbs) * 50;
+            const left = b.value >= 0 ? 50 : 50 - half;
+            return (
+              <div class="cc-bar" data-bar={b.label}>
+                <div class="cc-bar-head">
+                  <span class="cc-bar-label">{b.label}</span>
+                  <span class="cc-bar-val">{b.display}</span>
+                </div>
+                <div class="cc-track">
+                  <span class="cc-axis" />
+                  <span class="cc-fill" style={`left:${left}%;width:${half}%;`} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )
+    }
+
+    {
+      chart.kind === "compare" && (
+        <div class="cc-compare" aria-hidden="true">
+          {chart.series.map((s) => {
+            const max = Math.max(s.before, s.after, 1e-9);
+            const bp = (s.before / max) * 100;
+            const ap = (s.after / max) * 100;
+            return (
+              <div class="cc-series" data-series={s.label}>
+                <p class="cc-series-label">{s.label}</p>
+                <div class="cc-cmp-row">
+                  <span class="cc-cmp-tag">{chart.beforeLabel}</span>
+                  <span class="cc-cmp-track"><span class="cc-cmp-fill is-before" style={`width:${bp}%;`} /></span>
+                  <span class="cc-cmp-val">{s.beforeDisplay}</span>
+                </div>
+                <div class="cc-cmp-row">
+                  <span class="cc-cmp-tag">{chart.afterLabel}</span>
+                  <span class="cc-cmp-track"><span class="cc-cmp-fill is-after" style={`width:${ap}%;`} /></span>
+                  <span class="cc-cmp-val">{s.afterDisplay}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )
+    }
+
+    {
+      chart.kind === "rate" && (
+        <div class="cc-rate" aria-hidden="true">
+          <div class="cc-donut">
+            <svg viewBox="0 0 120 120" width="150" height="150" focusable="false" aria-hidden="true">
+              <circle class="cc-donut-bg" cx="60" cy="60" r={R} />
+              <circle
+                class="cc-donut-fg"
+                cx="60"
+                cy="60"
+                r={R}
+                transform="rotate(-90 60 60)"
+                style={`stroke-dasharray:${(chart.value / 100) * CIRC} ${CIRC};`}
+              />
+            </svg>
+            <div class="cc-donut-center">
+              <span class="stat-num cc-rate-num">{chart.display}</span>
+              <span class="cc-rate-label">{chart.label}</span>
+            </div>
+          </div>
+        </div>
+      )
+    }
+  </div>
+
+  {chart.note && <p class="cc-note">{chart.note}</p>}
+</figure>
+
+<style>
+  .case-chart {
+    margin: 0;
+    background: var(--band-filled);
+    border-radius: var(--radius-card);
+    padding: 22px 20px;
+  }
+  .cc-caption {
+    margin: 0 0 18px;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-head-ink);
+  }
+  .cc-graphic { display: block; }
+  .cc-note {
+    margin: 16px 0 0;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--color-mute);
+  }
+
+  /* delta — diverging bars from a centre zero axis */
+  .cc-bars { display: flex; flex-direction: column; gap: 14px; }
+  .cc-bar-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 5px;
+  }
+  .cc-bar-label { font-size: 14px; color: var(--color-body-ink); }
+  .cc-bar-val {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-head-ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .cc-track {
+    position: relative;
+    height: 10px;
+    background: #fff;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .cc-axis {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--color-line-strong);
+  }
+  .cc-fill {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: var(--cc-accent);
+    border-radius: 999px;
+  }
+
+  /* compare — independent before/after scale per series */
+  .cc-compare { display: flex; flex-direction: column; gap: 20px; }
+  .cc-series-label {
+    margin: 0 0 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-head-ink);
+  }
+  .cc-cmp-row {
+    display: grid;
+    grid-template-columns: 52px 1fr 64px;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .cc-cmp-tag { font-size: 12px; color: var(--color-mute); }
+  .cc-cmp-track {
+    position: relative;
+    height: 14px;
+    background: #fff;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .cc-cmp-fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; }
+  .cc-cmp-fill.is-before { background: var(--color-ink-600); }
+  .cc-cmp-fill.is-after { background: var(--cc-accent); }
+  .cc-cmp-val {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-head-ink);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* rate — donut ring */
+  .cc-rate { display: flex; justify-content: center; padding: 6px 0; }
+  .cc-donut { position: relative; width: 150px; height: 150px; }
+  .cc-donut svg { display: block; width: 150px; height: 150px; }
+  .cc-donut-bg { fill: none; stroke: var(--color-ink-600); stroke-width: 12; }
+  .cc-donut-fg { fill: none; stroke: var(--cc-accent); stroke-width: 12; stroke-linecap: round; }
+  .cc-donut-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+  }
+  .cc-rate-num { font-size: 34px; color: var(--cc-accent); }
+  .cc-rate-label { font-size: 12px; color: var(--color-mute); }
+</style>

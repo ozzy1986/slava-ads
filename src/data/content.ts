@@ -59,7 +59,40 @@ export interface CaseStudy {
   secondary?: { value: string; label: string }[];
   accent: "signal" | "volt";
   logo?: string;
+  chart?: CaseChart;
 }
+
+/** Chart numbers must come from the case facts — never invent a time series.
+ *  `value` drives bar geometry; `display` keeps the exact source formatting. */
+export type CaseChart =
+  | {
+      kind: "delta";
+      caption: string;
+      note?: string;
+      bars: { label: string; value: number; display: string }[];
+    }
+  | {
+      kind: "compare";
+      caption: string;
+      note?: string;
+      beforeLabel: string;
+      afterLabel: string;
+      series: {
+        label: string;
+        before: number;
+        after: number;
+        beforeDisplay: string;
+        afterDisplay: string;
+      }[];
+    }
+  | {
+      kind: "rate";
+      caption: string;
+      note?: string;
+      label: string;
+      value: number;
+      display: string;
+    };
 
 export interface Review {
   text: string;
@@ -241,6 +274,14 @@ export const cases: CaseStudy[] = [
     secondary: [{ value: "$19", label: "цена заявки" }],
     accent: "signal",
     logo: "/images/logos/tmm.png",
+    chart: {
+      kind: "rate",
+      caption: "Доля оформленных заявок",
+      note: "В среднем 200 заявок в неделю по $19.",
+      label: "оформляется",
+      value: 70,
+      display: "70%",
+    },
   },
   {
     id: "hhn",
@@ -258,6 +299,14 @@ export const cases: CaseStudy[] = [
     secondary: [{ value: "$18", label: "цена заявки" }],
     accent: "signal",
     logo: "/images/logos/hhn.png",
+    chart: {
+      kind: "rate",
+      caption: "Доля оформленных заявок",
+      note: "В среднем 50 заявок в неделю по $18.",
+      label: "оформляется",
+      value: 70,
+      display: "70%",
+    },
   },
   {
     id: "morskaya",
@@ -277,6 +326,20 @@ export const cases: CaseStudy[] = [
     secondary: [{ value: "90 ₽", label: "цена конверсии" }],
     accent: "volt",
     logo: "/images/logos/morskaya.svg",
+    chart: {
+      kind: "delta",
+      caption: "Динамика: одинаковые периоды 2023 и 2024",
+      note: "Бюджет прежний. Снижение стоимости клика и конверсии, а также отказов — улучшение.",
+      bars: [
+        { label: "Показы", value: 25, display: "+25%" },
+        { label: "Клики", value: 19, display: "+19%" },
+        { label: "Стоимость клика", value: -9, display: "−9%" },
+        { label: "Отказной трафик", value: -5, display: "−5%" },
+        { label: "Глубина просмотра", value: 59, display: "+59%" },
+        { label: "Стоимость конверсии", value: -16, display: "−16%" },
+        { label: "Конверсии", value: 29, display: "+29%" },
+      ],
+    },
   },
   {
     id: "proxamam",
@@ -298,6 +361,16 @@ export const cases: CaseStudy[] = [
     ],
     accent: "volt",
     logo: "/images/logos/proxamam.png",
+    chart: {
+      kind: "compare",
+      caption: "Конверсии за сопоставимые периоды",
+      note: "До: 10.07.2023–10.02.2024. После: 10.07.2024–10.02.2025. Бюджет тот же.",
+      beforeLabel: "до",
+      afterLabel: "после",
+      series: [
+        { label: "Конверсии", before: 193, after: 286, beforeDisplay: "193", afterDisplay: "286" },
+      ],
+    },
   },
   {
     id: "kzmdgrp",
@@ -321,6 +394,17 @@ export const cases: CaseStudy[] = [
     ],
     accent: "volt",
     logo: "/images/logos/kzmdgrp.jpeg",
+    chart: {
+      kind: "compare",
+      caption: "Заявки в неделю и цена лида",
+      note: "Заявки выросли в 4 раза, цена лида снизилась. Шкалы у метрик независимые.",
+      beforeLabel: "до",
+      afterLabel: "после",
+      series: [
+        { label: "Заявки в неделю", before: 5, after: 20, beforeDisplay: "5", afterDisplay: "20" },
+        { label: "Цена лида", before: 23, after: 5.59, beforeDisplay: "$23", afterDisplay: "$5,59" },
+      ],
+    },
   },
   {
     id: "sarmat",
@@ -339,6 +423,17 @@ export const cases: CaseStudy[] = [
     secondary: [{ value: "407 ₽", label: "цена заявки" }],
     accent: "volt",
     logo: "/images/logos/sarmat.svg",
+    chart: {
+      kind: "delta",
+      caption: "Динамика при росте расходов на 10 000 ₽",
+      note: "Снижение стоимости конверсии — улучшение.",
+      bars: [
+        { label: "Показы", value: 148, display: "+148%" },
+        { label: "Клики", value: 63, display: "+63%" },
+        { label: "Конверсии", value: 121, display: "+121%" },
+        { label: "Стоимость конверсии", value: -28, display: "−28%" },
+      ],
+    },
   },
 ];
 
