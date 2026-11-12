@@ -38,3 +38,5 @@ fi
 echo "=== Done. Next steps ==="
 echo "1. Create $SITE_ROOT/api/.env from .env.example with real values (DB_PASS=$DB_PASS)."
 echo "2. When DNS points here: sudo certbot --apache -d slava-ads.ru -d www.slava-ads.ru"
+echo "3. Canonical host www -> apex: in the certbot HTTP vhost set the redirect target to"
+echo "   https://slava-ads.ru, and add the same www -> apex 301 rule to the *-le-ssl.conf vhost."
