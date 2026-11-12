@@ -1,0 +1,22 @@
+---
+import { cta, faq } from "@/data/content";
+import SectionHeading from "@/components/SectionHeading.astro";
+import FaqList from "@/components/FaqList.astro";
+---
+
+<section class="section scroll-mt-28" id="faq">
+  <div class="container-x">
+    <div class="grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
+      <div>
+        <SectionHeading
+          eyebrow="Вопросы и ответы"
+          title="Отвечаю на частые вопросы"
+          subtitle="Не нашли ответ? Оставьте заявку — разберём вашу ситуацию персонально."
+        />
+        <button class="btn btn-primary reveal mt-7" data-lead="faq">{cta.button}</button>
+      </div>
+
+      <FaqList items={faq} name="faq" class="reveal" />
+    </div>
+  </div>
+</section>

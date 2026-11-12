@@ -1,0 +1,197 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import Icon from "@/components/Icon.astro";
+import CaseCard from "@/components/CaseCard.astro";
+import FaqList from "@/components/FaqList.astro";
+import CtaBand from "@/components/CtaBand.astro";
+import { serviceDetails } from "@/data/serviceDetails";
+import { cta, services, cases } from "@/data/content";
+import { site } from "@/config/site";
+import { person, personRef } from "@/config/schema";
+
+export function getStaticPaths() {
+  return Object.values(serviceDetails).map((d) => ({
+    params: { service: d.slug },
+    props: { detail: d },
+  }));
+}
+
+const { detail } = Astro.props;
+const meta = services.find((s) => s.slug === detail.slug);
+const related = cases.filter((c) => detail.relatedCaseIds.includes(c.id));
+
+const serviceSchema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  name: meta?.title ?? detail.h1.replace(/<[^>]+>/g, " "),
+  description: detail.seoDescription,
+  provider: personRef,
+  areaServed: ["RU", "KZ", "US"],
+  url: new URL(`/${detail.slug}`, site.url).href,
+};
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: detail.faq.map((f) => ({
+    "@type": "Question",
+    name: f.question,
+    acceptedAnswer: { "@type": "Answer", text: f.answer },
+  })),
+};
+---
+
+<Layout
+  title={detail.seoTitle}
+  description={detail.seoDescription}
+  path={`/${detail.slug}`}
+  schema={[serviceSchema, person, faqSchema]}
+>
+  <Breadcrumbs items={[{ label: "Услуги", href: "/#services" }, { label: meta?.title ?? "" }]} />
+
+  {/* Hero */}
+  <section class="pt-10 md:pt-14">
+    <div class="container-x">
+      <div class="grid items-center gap-10 lg:grid-cols-[1.2fr_0.8fr]">
+        <div class="reveal">
+          {meta && <p class="t-sec">{meta.short}</p>}
+          <h1 class="t-serif-hero mt-4">
+            <Fragment set:html={detail.h1} />
+          </h1>
+          <p class="mt-5 max-w-xl text-[16px] leading-[1.75] text-[var(--color-mute)]">
+            {detail.lead}
+          </p>
+          <div class="mt-7 flex flex-col gap-3 sm:flex-row">
+            <button class="btn btn-primary !px-7 !py-4" data-lead={`service-${detail.slug}`}>
+              {cta.button}
+              <Icon name="arrow" size={20} />
+            </button>
+            <a href="/cases" class="btn btn-ghost !px-7 !py-4">Смотреть кейсы</a>
+          </div>
+        </div>
+
+        <div class="reveal grid gap-4 lg:grid-cols-1" style="--sd:120ms;">
+          {
+            detail.outcomes.map((o) => (
+              <div class="resume-skills-card !px-5 lg:flex lg:items-center lg:justify-between">
+                <p class="stat-num text-2xl lg:text-3xl">{o.value}</p>
+                <p class="mt-1 text-xs text-[var(--color-mute)] lg:mt-0 lg:max-w-[220px] lg:text-right">{o.label}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <p class="reveal mt-12 max-w-3xl text-[17px] leading-[1.75] text-[var(--color-body-ink)]">
+        {detail.intro}
+      </p>
+    </div>
+  </section>
+
+  {/* Benefits */}
+  <section class="section">
+    <div class="container-x">
+      <h2 class="t-serif-title reveal">Что вы получите</h2>
+      <div class="skills-grid mt-10">
+        {
+          detail.benefits.map((b, i) => (
+            <article class="resume-skills-card reveal" style={`--sd:${120 + i * 100}ms;`}>
+              <span class="grid h-9 w-9 place-items-center rounded-full bg-white text-[var(--color-brand-blue)]">
+                <Icon name="check" size={18} />
+              </span>
+              <h3 class="resume-mini-head mt-4">{b.title}</h3>
+              <p class="mt-3 text-[15px] leading-[1.6]">{b.text}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  {/* Process */}
+  <section class="section pt-0">
+    <div class="container-x">
+      <h2 class="t-serif-title reveal">Как мы будем работать</h2>
+      <div class="skills-grid mt-10 lg:grid-cols-4">
+        {
+          detail.process.map((p, i) => (
+            <article class="resume-skills-card reveal" style={`--sd:${120 + i * 100}ms;`}>
+              <p class="step">{i + 1}</p>
+              <h3 class="resume-mini-head mt-4">{p.title}</h3>
+              <p class="mt-3 text-[15px] leading-[1.6]">{p.text}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  {/* For whom + tools */}
+  <section class="section pt-0">
+    <div class="container-x grid gap-5 lg:grid-cols-2">
+      <div class="resume-skills-card reveal p-6 md:p-8">
+        <h2 class="font-display text-[22px]">Кому подходит</h2>
+        <ul class="resume-list">
+          {detail.forWhom.map((f) => <li>{f}</li>)}
+        </ul>
+      </div>
+      <div class="resume-skills-card reveal p-6 md:p-8" style="--sd:200ms;">
+        <h2 class="font-display text-[22px]">Инструменты</h2>
+        <div class="mt-5 flex flex-wrap gap-2.5">
+          {
+            meta?.tools.map((t) => (
+              <span class="rounded-[var(--radius-pill)] border border-[rgba(17,17,17,0.12)] bg-white px-4 py-2 text-sm text-[var(--color-mute)]">
+                {t}
+              </span>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* Related cases */}
+  {
+    related.length > 0 && (
+      <section class="section pt-0">
+        <div class="container-x">
+          <div class="flex items-end justify-between gap-4">
+            <h2 class="t-serif-title reveal">Кейсы по теме</h2>
+            <a href="/cases" class="btn btn-ghost reveal">Все кейсы</a>
+          </div>
+          <div class="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {related.map((c, i) => (
+              <CaseCard item={c} index={i} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {/* FAQ */}
+  <section class="section pt-0">
+    <div class="container-x max-w-3xl">
+      <h2 class="t-serif-title reveal">Частые вопросы</h2>
+      <FaqList items={detail.faq} name="svc-faq" class="reveal mt-8" />
+
+      <CtaBand
+        class="mt-12"
+        title="Обсудим ваш проект?"
+        subtitle="Разберу задачу и предложу план. Бесплатно."
+        source={`service-cta-${detail.slug}`}
+      />
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .step {
+    font-family: var(--font-display), Georgia, serif;
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--color-accent);
+    margin: 0;
+  }
+</style>

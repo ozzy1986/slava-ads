@@ -1,0 +1,42 @@
+---
+import { cta } from "@/data/content";
+import Icon from "@/components/Icon.astro";
+---
+
+<section class="section" id="cta">
+  <div class="container-x">
+    <div class="cta-band reveal rounded-[24px] p-8 text-center md:p-16">
+      <div class="mx-auto max-w-2xl">
+        <p class="label">Бесплатная консультация</p>
+        <h2 class="t-serif-title mt-4">{cta.title}</h2>
+        <p class="mt-4 text-[16px] leading-[1.75] text-white/90">{cta.subtitle}</p>
+
+        <div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <button class="btn btn-primary !px-8 !py-4" data-lead="cta-section">
+            {cta.button}
+            <Icon name="arrow" size={20} />
+          </button>
+          <a href="/cases" class="btn btn-ghost !px-8 !py-4">Изучить кейсы</a>
+        </div>
+
+        <p class="mt-6 text-xs text-white/80">
+          Отвечаю лично · Работаю с ограниченным числом проектов
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .label {
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+  }
+  .t-serif-title {
+    color: #fff;
+  }
+</style>

@@ -1,0 +1,77 @@
+---
+import { workflow } from "@/data/content";
+---
+
+<section class="section scroll-mt-28" id="workflow">
+  <div class="container-x">
+    <div class="mx-auto max-w-[800px] text-center">
+      <p class="t-sec reveal">Как я работаю</p>
+      <h2 class="t-serif-title reveal mt-4" style="--sd:120ms;">Четыре контрольные точки</h2>
+      <p class="reveal mt-4 text-[16px] leading-[1.75] text-[var(--color-mute)]" style="--sd:200ms;">
+        Работа идёт через четыре контрольные точки: на каждой понятно, что делаем
+        и что получает заказчик.
+      </p>
+    </div>
+
+    <div class="workflow-grid mt-12">
+      {
+        workflow.map((s, i) => (
+          <article class="resume-skills-card reveal" style={`--sd:${120 + i * 110}ms;`}>
+            <p class="step">{s.step}</p>
+            <h3 class="resume-mini-head mt-4">{s.title}</h3>
+            <div class="mt-5">
+              <p class="workflow-label">Что делаем</p>
+              <p class="workflow-text">{s.actions}</p>
+            </div>
+            <div class="mt-4">
+              <p class="workflow-label">Что получает заказчик</p>
+              <p class="workflow-text">{s.outcome}</p>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+
+    <p class="reveal mx-auto mt-8 max-w-[800px] text-center text-[14px] leading-[1.7] text-[var(--color-mute)]" style="--sd:200ms;">
+      Целевые сроки не обещаю заранее: прогноз обозначаю как прогноз с
+      предпосылками, а не гарантию, и уточняю по фактическим данным.
+    </p>
+  </div>
+</section>
+
+<style>
+  .workflow-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  @media (min-width: 768px) {
+    .workflow-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 1280px) {
+    .workflow-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+
+  .step {
+    font-family: var(--font-display), Georgia, serif;
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--color-accent);
+    margin: 0;
+  }
+  .workflow-label {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--label-gray);
+  }
+  .workflow-text {
+    margin: 6px 0 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--color-body-ink);
+  }
+</style>

@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api
+
+Sitemap: https://slava-ads.ru/sitemap-index.xml
+Host: https://slava-ads.ru

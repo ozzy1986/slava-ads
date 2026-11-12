@@ -1,0 +1,164 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import Icon from "@/components/Icon.astro";
+import CaseCard from "@/components/CaseCard.astro";
+import { cases, cta } from "@/data/content";
+import { caseDetails } from "@/data/caseDetails";
+import { site } from "@/config/site";
+import { person, personRef, organizationRef } from "@/config/schema";
+
+export function getStaticPaths() {
+  return cases.map((c) => ({
+    params: { id: c.id },
+    props: { item: c, detail: caseDetails[c.id] },
+  }));
+}
+
+const { item, detail } = Astro.props;
+const accentVar = item.accent === "volt" ? "--color-volt-400" : "--color-signal-400";
+const others = cases.filter((c) => c.id !== item.id).slice(0, 3);
+
+const facts = [
+  { label: "Проект", value: item.project },
+  { label: "Цель", value: item.goal },
+  { label: "География", value: detail?.geoDetail ?? item.geo },
+  { label: "Реклама", value: item.advertising },
+  { label: "Сайт", value: item.websiteNote ? `${item.website} (${item.websiteNote})` : item.website },
+];
+
+const allMetrics = [item.metric, ...(item.secondary ?? [])];
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: detail?.seoTitle ?? item.title,
+  description: detail?.seoDescription ?? item.goal,
+  author: personRef,
+  publisher: organizationRef,
+  mainEntityOfPage: new URL(`/cases/${item.id}`, site.url).href,
+};
+---
+
+<Layout
+  title={detail?.seoTitle ?? `Кейс ${item.title}`}
+  description={detail?.seoDescription ?? item.goal}
+  path={`/cases/${item.id}`}
+  schema={[schema, person]}
+>
+  <Breadcrumbs items={[{ label: "Кейсы", href: "/cases" }, { label: item.title }]} />
+
+  <article>
+    {/* Hero */}
+    <section class="pt-10 md:pt-14">
+      <div class="container-x">
+        <div class="reveal flex flex-wrap items-center gap-3">
+          <span class="rounded-full border border-[rgba(17,17,17,0.12)] bg-white px-3.5 py-1.5 text-xs font-medium text-[var(--color-mute)]">{item.advertising}</span>
+          <span class="rounded-full border border-[rgba(17,17,17,0.12)] bg-white px-3.5 py-1.5 text-xs font-medium text-[var(--color-mute)]">{item.geo}</span>
+        </div>
+        {
+          item.logo && (
+            <div class="reveal mt-6 inline-flex rounded-xl border border-[rgba(17,17,17,0.12)] bg-white px-5 py-4" style="--sd:80ms;">
+              <img src={item.logo} alt={`Логотип ${item.title}`} class="h-14 w-auto max-w-[240px] object-contain" loading="lazy" decoding="async" />
+            </div>
+          )
+        }
+        <h1 class="t-serif-hero reveal mt-5">{item.title}</h1>
+        <p class="reveal mt-4 max-w-2xl text-[16px] leading-[1.75] text-[var(--color-mute)]">{detail?.summary ?? item.project}</p>
+
+        {/* Metrics */}
+        <div class="reveal mt-10 grid gap-4" style={`grid-template-columns: repeat(${allMetrics.length}, minmax(0,1fr));`}>
+          {
+            allMetrics.map((m) => (
+              <div class="resume-skills-card py-6 text-center">
+                <p class="stat-num text-[clamp(1.8rem,5vw,3rem)]" style={`color: var(${accentVar});`}>{m.value}</p>
+                <p class="mt-1.5 text-xs text-[var(--color-mute)]">{m.label}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    {/* Body */}
+    <section class="section">
+      <div class="container-x grid gap-10 lg:grid-cols-[1fr_320px]">
+        <div class="reveal space-y-10">
+          {
+            detail && (
+              <>
+                <div>
+                  <h2 class="font-display text-[26px]">Задача</h2>
+                  <p class="mt-4 text-[16px] leading-[1.75] text-[var(--color-body-ink)]">{detail.challenge}</p>
+                </div>
+                <div>
+                  <h2 class="font-display text-[26px]">Что я сделал</h2>
+                  <div class="mt-6 space-y-7">
+                    {detail.sections.map((s) => (
+                      <div>
+                        <h3 class="text-[13px] font-semibold uppercase tracking-[0.08em] text-[var(--label-gray)]">{s.title}</h3>
+                        <ul class="resume-list mt-3">
+                          {s.items.map((a) => <li>{a}</li>)}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <h2 class="font-display text-[26px]">Результат</h2>
+                  <p class="mt-4 text-[16px] leading-[1.75] text-[var(--color-body-ink)]">{detail.result}</p>
+                </div>
+
+                {detail.note && (
+                  <aside class="rounded-2xl border border-[rgba(17,17,17,0.12)] bg-[var(--band-filled)] p-5 text-[15px] leading-[1.7] text-[var(--color-mute)]">
+                    {detail.note}
+                  </aside>
+                )}
+
+                {detail.quote && (
+                  <blockquote class="resume-skills-card relative !p-7">
+                    <div class="absolute right-6 top-5 opacity-20" style={`color: var(${accentVar});`}>
+                      <Icon name={detail.quote.channel === "WhatsApp" ? "whatsapp" : "telegram"} size={40} />
+                    </div>
+                    <p class="text-[17px] leading-[1.7]">«{detail.quote.text}»</p>
+                    <footer class="mt-4 text-sm font-semibold text-[var(--color-mute)]">— {detail.quote.author}</footer>
+                  </blockquote>
+                )}
+              </>
+            )
+          }
+        </div>
+
+        {/* Sidebar facts */}
+        <aside class="reveal lg:sticky lg:top-28 lg:self-start">
+          <div class="resume-skills-card !p-6">
+            <h2 class="font-display text-xl">О проекте</h2>
+            <dl class="mt-5 space-y-4">
+              {
+                facts.map((f) => (
+                  <div class="border-b border-[rgba(17,17,17,0.12)] pb-4 last:border-0 last:pb-0">
+                    <dt class="text-xs uppercase tracking-[0.08em] text-[var(--label-gray)]">{f.label}</dt>
+                    <dd class="mt-1 text-sm text-[var(--color-body-ink)]">{f.value}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+            <button class="btn btn-primary mt-6 w-full" data-lead={`case-${item.id}`}>
+              {cta.button}
+            </button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    {/* Other cases */}
+    <section class="section pt-0">
+      <div class="container-x">
+        <h2 class="reveal font-display text-[26px]">Другие кейсы</h2>
+        <div class="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {others.map((c, i) => <CaseCard item={c} index={i} />)}
+        </div>
+      </div>
+    </section>
+  </article>
+</Layout>

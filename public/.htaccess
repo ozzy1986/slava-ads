@@ -1,0 +1,50 @@
+# slava-ads.ru — Apache config (lands at DocumentRoot root via Astro public/)
+
+# ---- Security: block dotfiles and env ----
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+<Files ".env">
+    Require all denied
+</Files>
+<FilesMatch "\.(sql|md|example)$">
+    Require all denied
+</FilesMatch>
+
+# ---- Default charset ----
+AddDefaultCharset UTF-8
+
+# ---- Custom error page ----
+ErrorDocument 404 /404.html
+
+# ---- Compression ----
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml
+    AddOutputFilterByType DEFLATE application/javascript application/x-javascript
+    AddOutputFilterByType DEFLATE application/json application/xml
+    AddOutputFilterByType DEFLATE image/svg+xml
+    AddOutputFilterByType DEFLATE font/woff2 font/woff
+</IfModule>
+
+# ---- Caching ----
+<IfModule mod_expires.c>
+    ExpiresActive On
+    # Hashed Astro assets — cache hard
+    <FilesMatch "\.(js|css|woff2|woff|ttf|svg|png|jpg|jpeg|gif|webp|avif|ico)$">
+        ExpiresDefault "access plus 1 year"
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+    # HTML — revalidate
+    <FilesMatch "\.html$">
+        ExpiresDefault "access plus 0 seconds"
+        Header set Cache-Control "public, max-age=0, must-revalidate"
+    </FilesMatch>
+</IfModule>
+
+# ---- Security headers ----
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>

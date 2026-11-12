@@ -1,0 +1,107 @@
+---
+import { economics } from "@/data/content";
+import Icon from "@/components/Icon.astro";
+---
+
+<section class="section scroll-mt-28" id="economics">
+  <div class="container-x">
+    <div class="mx-auto max-w-[820px] text-center">
+      <p class="t-sec reveal">Экономика заявки</p>
+      <h2 class="t-serif-title reveal mt-4" style="--sd:120ms;">{economics.heading}</h2>
+      <p class="reveal mt-4 text-[16px] leading-[1.75] text-[var(--color-mute)]" style="--sd:200ms;">
+        {economics.lead}
+      </p>
+    </div>
+
+    <div class="skills-grid mt-10">
+      {
+        economics.points.map((p, i) => (
+          <article class="resume-skills-card reveal" style={`--sd:${120 + i * 110}ms;`}>
+            <span class="grid h-9 w-9 place-items-center rounded-full bg-white text-[var(--color-brand-blue)]">
+              <Icon name={p.icon} size={18} />
+            </span>
+            <h3 class="resume-mini-head mt-4">{p.title}</h3>
+            <p class="mt-3 text-[15px] leading-[1.6]">{p.text}</p>
+          </article>
+        ))
+      }
+    </div>
+
+    <div class="econ-formula reveal mt-10" style="--sd:200ms;">
+      <p class="t-sec econ-formula-label">Формула допустимой цены заявки</p>
+      <div class="econ-scheme">
+        <div class="econ-term econ-term--result">{economics.formula.result}</div>
+        <span class="econ-op">=</span>
+        <div class="econ-term">{economics.formula.factors[0]}</div>
+        <span class="econ-op">×</span>
+        <div class="econ-term">{economics.formula.factors[1]}</div>
+      </div>
+      <p class="econ-note">{economics.formula.note}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .econ-formula {
+    background: var(--band-filled);
+    border: 1px solid rgba(17, 17, 17, 0.08);
+    border-radius: 20px;
+    padding: 28px 22px;
+  }
+  @media (min-width: 768px) {
+    .econ-formula { padding: 36px 32px; }
+  }
+  .econ-formula-label {
+    margin: 0 0 20px;
+    text-align: center;
+  }
+
+  .econ-scheme {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .econ-term {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: #fff;
+    border: 1px solid rgba(17, 17, 17, 0.12);
+    border-radius: 14px;
+    padding: 18px 16px;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--color-body-ink);
+  }
+  .econ-term--result {
+    border-color: var(--color-brand-blue);
+    box-shadow: 0 0 0 1px var(--color-brand-blue);
+    color: var(--color-head-ink);
+    font-weight: 700;
+  }
+  .econ-op {
+    align-self: center;
+    font-family: var(--font-display), Georgia, serif;
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--color-accent);
+  }
+  @media (min-width: 768px) {
+    .econ-scheme { flex-direction: row; gap: 14px; }
+    .econ-term { flex: 1 1 0; }
+    .econ-term--result { flex: 0 0 auto; min-width: 180px; }
+  }
+
+  .econ-note {
+    margin: 22px auto 0;
+    max-width: 760px;
+    text-align: center;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--color-mute);
+  }
+</style>

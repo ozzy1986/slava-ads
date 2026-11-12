@@ -1,0 +1,211 @@
+---
+import { cta, services } from "@/data/content";
+import { site } from "@/config/site";
+
+const navLinks = [
+  { label: "Услуги", href: "/#services" },
+  { label: "Кейсы", href: "/cases" },
+  { label: "Как работаю", href: "/#workflow" },
+  { label: "Отзывы", href: "/#reviews" },
+  { label: "Блог", href: "/blog" },
+];
+
+---
+
+<header
+  id="site-header"
+  class="fixed inset-x-0 top-0 z-40 transition-all duration-300"
+  data-header
+>
+  <div class="nav-shell">
+    <nav class="top" aria-label="Основная навигация">
+      <a href="/" class="brand" aria-label={site.brand}>
+        <img
+          src="/logo.png"
+          alt={site.brand}
+          width="789"
+          height="347"
+          class="h-9 w-auto"
+        />
+      </a>
+
+      <div class="links">
+        {
+          navLinks.map((l) => (
+            <a href={l.href}>{l.label}</a>
+          ))
+        }
+      </div>
+
+      <div class="flex items-center gap-2">
+        <a
+          href={site.contacts.phoneHref}
+          class="mr-2 hidden text-[14px] font-semibold text-[var(--color-head-ink)] transition-colors hover:text-[var(--color-brand-blue)] lg:inline-flex"
+        >
+          {site.contacts.phone}
+        </a>
+        <button class="btn btn-primary !px-5 !py-2.5 !text-[13px] hidden md:inline-flex" data-lead="header">
+          {cta.button}
+        </button>
+        <button
+          class="grid h-10 w-10 place-items-center rounded-full border border-[var(--color-line)] text-[var(--color-head-ink)] lg:hidden"
+          aria-label="Меню"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          data-menu-toggle
+        >
+          <span class="relative block h-3 w-5">
+            <span class="absolute inset-x-0 top-0 h-0.5 rounded bg-current transition-transform" data-bar-top></span>
+            <span class="absolute inset-x-0 top-1/2 h-0.5 -translate-y-1/2 rounded bg-current transition-opacity" data-bar-mid></span>
+            <span class="absolute inset-x-0 bottom-0 h-0.5 rounded bg-current transition-transform" data-bar-bot></span>
+          </span>
+        </button>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Mobile menu -->
+  <div
+    id="mobile-menu"
+    class="container-x pointer-events-none fixed inset-x-0 top-0 z-30 lg:hidden"
+    data-mobile-menu
+    hidden
+  >
+    <div
+      class="mt-16 origin-top scale-95 rounded-3xl border border-[var(--color-line)] bg-white p-5 opacity-0 shadow-[0_24px_60px_-30px_rgba(16,24,40,0.35)] transition-all duration-200"
+      data-mobile-panel
+    >
+      <nav class="flex flex-col gap-1" aria-label="Мобильная навигация">
+        {
+          navLinks.map((l) => (
+            <a
+              href={l.href}
+              class="rounded-xl px-4 py-3 text-base font-medium text-[var(--color-head-ink)] transition-colors hover:bg-[var(--band-filled)]"
+              data-menu-link
+            >
+              {l.label}
+            </a>
+          ))
+        }
+      </nav>
+      <div class="mt-4 flex flex-wrap gap-2">
+        {
+          services.map((s) => (
+            <a
+              href={`/${s.slug}`}
+              class="rounded-[var(--radius-pill)] bg-[var(--band-filled)] px-3.5 py-2 text-xs font-medium text-[var(--color-mute)]"
+              data-menu-link
+            >
+              {s.title}
+            </a>
+          ))
+        }
+      </div>
+      <button class="btn btn-primary mt-5 w-full" data-lead="mobile-menu">
+        {cta.button}
+      </button>
+      <div class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-[var(--color-line)] pt-4 text-[14px] font-medium">
+        <a href={site.contacts.phoneHref} class="text-[var(--color-head-ink)]" data-menu-link>{site.contacts.phone}</a>
+        <a href={site.contacts.telegram} target="_blank" rel="noopener" class="text-[var(--color-brand-blue)]" data-menu-link>Telegram</a>
+        <a href={site.contacts.whatsapp} target="_blank" rel="noopener" class="text-[var(--color-brand-blue)]" data-menu-link>WhatsApp</a>
+        <a href={site.resume} target="_blank" rel="noopener" class="text-[var(--color-mute)]" data-menu-link>Резюме (PDF)</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Hairline appears once the page scrolls
+  const header = document.querySelector("[data-header]");
+  const onScroll = () => {
+    if (window.scrollY > 12) header?.classList.add("is-scrolled");
+    else header?.classList.remove("is-scrolled");
+  };
+  onScroll();
+  window.addEventListener("scroll", onScroll, { passive: true });
+
+  // Mobile menu toggle
+  const toggle = document.querySelector("[data-menu-toggle]");
+  const menu = document.querySelector("[data-mobile-menu]") as HTMLElement | null;
+  const panel = document.querySelector("[data-mobile-panel]");
+  const barTop = document.querySelector("[data-bar-top]") as HTMLElement | null;
+  const barMid = document.querySelector("[data-bar-mid]") as HTMLElement | null;
+  const barBot = document.querySelector("[data-bar-bot]") as HTMLElement | null;
+  let open = false;
+
+  function setMenu(next: boolean) {
+    open = next;
+    toggle?.setAttribute("aria-expanded", String(next));
+    if (!menu || !panel) return;
+    if (open) {
+      menu.hidden = false;
+      menu.classList.add("pointer-events-auto");
+      requestAnimationFrame(() => {
+        panel.classList.remove("scale-95", "opacity-0");
+      });
+      barTop?.style.setProperty("transform", "translateY(5px) rotate(45deg)");
+      barMid?.style.setProperty("opacity", "0");
+      barBot?.style.setProperty("transform", "translateY(-5px) rotate(-45deg)");
+    } else {
+      panel.classList.add("scale-95", "opacity-0");
+      menu.classList.remove("pointer-events-auto");
+      barTop?.style.removeProperty("transform");
+      barMid?.style.removeProperty("opacity");
+      barBot?.style.removeProperty("transform");
+      window.setTimeout(() => {
+        if (!open && menu) menu.hidden = true;
+      }, 200);
+    }
+  }
+
+  toggle?.addEventListener("click", () => setMenu(!open));
+  document
+    .querySelectorAll("[data-menu-link]")
+    .forEach((l) => l.addEventListener("click", () => setMenu(false)));
+</script>
+
+<style>
+  .nav-shell {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 26px 16px;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+  }
+  @media (min-width: 1024px) { .nav-shell { padding: 22px 40px; } }
+  @media (min-width: 1280px) { .nav-shell { padding: 26px 100px; } }
+
+  nav.top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    line-height: 0;
+    text-decoration: none;
+  }
+
+  .links {
+    display: none;
+    gap: 28px;
+    font-size: 15px;
+    font-weight: 500;
+  }
+  @media (min-width: 1024px) { .links { display: flex; } }
+  .links a {
+    color: #202020;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .links a:hover { color: var(--color-accent); }
+
+  [data-header].is-scrolled > .nav-shell {
+    background: rgba(255, 255, 255, 0.92);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 1px 0 0 rgba(17, 17, 17, 0.12);
+  }
+</style>

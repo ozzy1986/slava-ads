@@ -1,0 +1,195 @@
+---
+import { cta, services } from "@/data/content";
+import { site } from "@/config/site";
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site">
+  <div class="inner">
+    <p class="t-footer-brand">{site.brand}</p>
+    <p class="role">{site.role}</p>
+    <p class="role sub">Контекстная реклама и сайты · Россия, СНГ, США</p>
+
+    <p class="intro">
+      Если вы думаете, кому доверить рекламу, или хотите обсудить конкретный
+      проект — напишите мне, разберём вашу нишу бесплатно.
+    </p>
+    <button class="pill" data-lead="footer">{cta.button}</button>
+
+    <div class="contacts">
+      <a href={site.contacts.phoneHref}>{site.contacts.phone}</a>
+      <a href={`mailto:${site.contacts.email}`}>{site.contacts.email}</a>
+      <a href={site.contacts.telegram} target="_blank" rel="noopener">Telegram</a>
+      <a href={site.contacts.whatsapp} target="_blank" rel="noopener">WhatsApp</a>
+    </div>
+
+    <div class="cols">
+      <div>
+        <h3 class="t-sec">Услуги</h3>
+        <ul>
+          {
+            services.map((s) => (
+              <li>
+                <a href={`/${s.slug}`}>{s.title}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="t-sec">Разделы</h3>
+        <ul>
+          <li><a href="/cases">Кейсы</a></li>
+          <li><a href="/blog">Блог</a></li>
+          <li><a href="/#reviews">Отзывы</a></li>
+          <li><a href="/#faq">Вопросы и ответы</a></li>
+          <li><a href={site.resume} target="_blank" rel="noopener">Резюме (PDF)</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="t-sec">Документы</h3>
+        <ul>
+          <li><a href="/privacy">Политика конфиденциальности</a></li>
+          <li><a href="/consent">Согласие на обработку данных</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="base">© {year} {site.brand}</div>
+  </div>
+</footer>
+
+<style>
+  footer.site {
+    background: var(--color-footer-blue);
+    color: #fff;
+    margin-top: 96px;
+  }
+  footer.site a,
+  footer.site a:hover,
+  footer.site a:focus-visible {
+    color: #fff;
+  }
+
+  .inner {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 64px 16px 48px;
+  }
+  @media (min-width: 1024px) { .inner { padding: 90px 40px 70px; } }
+  @media (min-width: 1280px) { .inner { padding: 150px 100px 120px; } }
+
+  .t-footer-brand {
+    font-family: var(--font-sans);
+    letter-spacing: 1.2px;
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 32px;
+    margin: 0;
+  }
+  @media (min-width: 1024px) { .t-footer-brand { font-size: 28px; } }
+  @media (min-width: 1280px) { .t-footer-brand { font-size: 32px; } }
+
+  .role {
+    letter-spacing: 0.8px;
+    margin: 14px 0 0;
+    font-size: 19px;
+    font-weight: 400;
+    opacity: 0.95;
+  }
+  .role.sub {
+    margin-top: 6px;
+    font-size: 14px;
+  }
+
+  .intro {
+    opacity: 0.95;
+    margin: 48px 0 18px;
+    font-size: 17px;
+    line-height: 1.7;
+    max-width: 560px;
+  }
+  @media (min-width: 1280px) { .intro { margin-top: 72px; } }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 26px;
+    background: #fff;
+    color: var(--color-footer-blue);
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .pill:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 26px -14px rgba(0, 0, 0, 0.45);
+  }
+  .pill:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 3px;
+  }
+
+  .contacts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 28px;
+    margin-top: 28px;
+  }
+  .contacts a {
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    opacity: 0.95;
+  }
+  .contacts a:hover {
+    opacity: 1;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .cols {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    margin-top: 56px;
+  }
+  @media (min-width: 768px) { .cols { grid-template-columns: repeat(3, 1fr); } }
+
+  .cols h3.t-sec {
+    color: rgba(255, 255, 255, 0.75);
+  }
+  .cols ul {
+    list-style: none;
+    margin: 16px 0 0;
+    padding: 0;
+  }
+  .cols li {
+    margin-top: 10px;
+  }
+  .cols a {
+    font-size: 15px;
+    text-decoration: none;
+    opacity: 0.92;
+  }
+  .cols a:hover {
+    opacity: 1;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .base {
+    margin-top: 56px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.35);
+    font-size: 14px;
+    letter-spacing: 0.8px;
+    opacity: 0.9;
+  }
+</style>

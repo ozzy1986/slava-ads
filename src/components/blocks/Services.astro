@@ -1,0 +1,57 @@
+---
+import { services } from "@/data/content";
+import Icon from "@/components/Icon.astro";
+---
+
+<section class="section scroll-mt-28" id="services">
+  <div class="container-x">
+    <p class="t-sec reveal">Услуги</p>
+    <h2 class="t-serif-title reveal mt-4" style="--sd:120ms;">
+      Реклама, сайт и аналитика в одной связке
+    </h2>
+    <p class="reveal mt-4 max-w-xl text-[16px] leading-[1.75] text-[var(--color-mute)]" style="--sd:200ms;">
+      Веду рекламу, дорабатываю посадочные страницы и настраиваю учёт обращений
+      как одну связку. Решения принимаем по стоимости и качеству заявок, а не по
+      кликам и показам.
+    </p>
+
+    <div class="skills-grid mt-12">
+      {
+        services.map((s, i) => (
+          <article
+            class:list={["resume-skills-card reveal", i === 0 && "span2"]}
+            style={`--sd:${120 + i * 110}ms;`}
+          >
+            <div class="flex items-start justify-between gap-4">
+              <h3 class="resume-mini-head">{s.title}</h3>
+              <span class="grid h-8 w-8 place-items-center rounded-full bg-white text-[var(--color-brand-blue)]">
+                <Icon name={s.icon} size={16} />
+              </span>
+            </div>
+            <p class="mt-3 text-[13px] font-medium uppercase tracking-[0.08em] text-[var(--label-gray)]">
+              {s.short}
+            </p>
+            <ul class="resume-list">
+              {s.bullets.slice(0, 4).map((b) => <li>{b}</li>)}
+            </ul>
+            <p class="mt-4 text-[15px] leading-[1.6] text-[var(--color-mute)]">
+              {s.description}
+            </p>
+            <a
+              href={`/${s.slug}`}
+              class="mt-5 inline-flex items-center gap-1.5 text-[15px] font-semibold text-[var(--color-brand-blue)] transition-colors hover:text-[var(--color-accent)]"
+            >
+              Подробнее об услуге
+              <span><Icon name="arrow" size={16} /></span>
+            </a>
+          </article>
+        ))
+      }
+    </div>
+
+    <p class="reveal mt-8 max-w-3xl text-[15px] leading-[1.7] text-[var(--color-mute)]" style="--sd:200ms;">
+      Аналитика — сквозная часть работы, а не отдельная услуга: связываю рекламу,
+      страницу и учёт обращений, чтобы оценивать стоимость и качество заявок.
+    </p>
+  </div>
+</section>

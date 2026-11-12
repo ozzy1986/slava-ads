@@ -1,0 +1,47 @@
+---
+/**
+ * Reusable lead CTA band — the saturated blue surface of the page.
+ * Shared across homepage, service, cases and blog pages (DRY).
+ */
+import Icon from "@/components/Icon.astro";
+import { cta } from "@/data/content";
+
+interface Props {
+  title: string;
+  subtitle?: string;
+  buttonLabel?: string;
+  /** Lead-source label sent with the form submission for attribution. */
+  source: string;
+  secondaryHref?: string;
+  secondaryLabel?: string;
+  class?: string;
+}
+const {
+  title,
+  subtitle,
+  buttonLabel = cta.button,
+  source,
+  secondaryHref,
+  secondaryLabel,
+  class: className = "",
+} = Astro.props;
+---
+
+<div class:list={["cta-band reveal rounded-[24px] p-8 text-center md:p-12", className]}>
+  <h2 class="font-display text-[clamp(26px,4vw,38px)]">{title}</h2>
+  {subtitle && <p class="mt-3 text-[16px] leading-[1.7] text-white/90">{subtitle}</p>}
+
+  <div class="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+    <button class="btn btn-primary !px-8 !py-4" data-lead={source}>
+      {buttonLabel}
+      <Icon name="arrow" size={20} />
+    </button>
+    {
+      secondaryHref && secondaryLabel && (
+        <a href={secondaryHref} class="btn btn-ghost !px-8 !py-4">
+          {secondaryLabel}
+        </a>
+      )
+    }
+  </div>
+</div>

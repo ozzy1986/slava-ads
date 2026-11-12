@@ -1,0 +1,47 @@
+---
+import { site } from "@/config/site";
+
+interface Crumb {
+  label: string;
+  href?: string;
+}
+interface Props {
+  items: Crumb[];
+}
+const { items } = Astro.props;
+
+const all: Crumb[] = [{ label: "Главная", href: "/" }, ...items];
+---
+
+<nav aria-label="Хлебные крошки" class="container-x pt-28 md:pt-32">
+  <ol class="flex flex-wrap items-center gap-1.5 text-xs text-[var(--label-gray)]">
+    {
+      all.map((c, i) => (
+        <li class="flex items-center gap-1.5">
+          {c.href && i < all.length - 1 ? (
+            <a href={c.href} class="transition-colors hover:text-[var(--color-brand-blue)]">
+              {c.label}
+            </a>
+          ) : (
+            <span class="text-[var(--color-mute)]">{c.label}</span>
+          )}
+          {i < all.length - 1 && <span class="opacity-50">/</span>}
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+
+<script
+  type="application/ld+json"
+  set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: all.map((c, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: c.label,
+      item: c.href ? new URL(c.href, site.url).href : undefined,
+    })),
+  })}
+/>

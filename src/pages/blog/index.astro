@@ -1,0 +1,106 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import Icon from "@/components/Icon.astro";
+import { getCollection } from "astro:content";
+import { site } from "@/config/site";
+import { person, personRef } from "@/config/schema";
+
+const posts = (await getCollection("blog")).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" });
+
+const [featured, ...rest] = posts;
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  name: "Блог о рекламе и заявках",
+  url: new URL("/blog", site.url).href,
+  author: personRef,
+  blogPost: posts.map((p) => ({
+    "@type": "BlogPosting",
+    headline: p.data.title,
+    datePublished: p.data.pubDate.toISOString(),
+    url: new URL(`/blog/${p.id}`, site.url).href,
+  })),
+};
+---
+
+<Layout
+  title="Блог об интернет-маркетинге"
+  description="Статьи о контекстной рекламе, аналитике, конверсии и продвижении бизнеса в интернете. Практика без воды."
+  path="/blog"
+  schema={[schema, person]}
+>
+  <Breadcrumbs items={[{ label: "Блог" }]} />
+
+  <section class="pt-10 md:pt-14">
+    <div class="container-x">
+      <div class="reveal max-w-3xl">
+        <p class="t-sec">Блог</p>
+        <h1 class="t-serif-hero mt-4">О маркетинге по делу</h1>
+        <p class="mt-5 text-[16px] leading-[1.75] text-[var(--color-mute)]">
+          Разбираю контекстную рекламу, аналитику и конверсию на практике — так, как применяю в проектах.
+        </p>
+      </div>
+
+      {/* Featured */}
+      {
+        featured && (
+          <a
+            href={`/blog/${featured.id}`}
+            class="resume-skills-card reveal group mt-12 block !p-8 md:!p-12"
+          >
+            <div class="flex flex-wrap items-center gap-3 text-xs text-[var(--label-gray)]">
+              <span class="rounded-full bg-white px-3 py-1 font-medium text-[var(--color-brand-blue)]">
+                {featured.data.category}
+              </span>
+              <span>{fmt(featured.data.pubDate)}</span>
+              <span>· {featured.data.readingMinutes} мин</span>
+            </div>
+            <h2 class="mt-5 max-w-3xl font-display text-[clamp(24px,3.5vw,34px)] leading-tight">
+              {featured.data.title}
+            </h2>
+            <p class="mt-4 max-w-2xl text-[16px] leading-[1.7] text-[var(--color-mute)]">{featured.data.description}</p>
+            <span class="mt-6 inline-flex items-center gap-1.5 text-[15px] font-semibold text-[var(--color-brand-blue)] group-hover:text-[var(--color-accent)]">
+              Читать статью
+              <Icon name="arrow" size={16} />
+            </span>
+          </a>
+        )
+      }
+
+      {/* Rest */}
+      <div class="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {
+          rest.map((p, i) => (
+            <a
+              href={`/blog/${p.id}`}
+              class="resume-skills-card reveal group flex flex-col !p-7"
+              style={`--sd:${120 + i * 110}ms;`}
+            >
+              <div class="flex flex-wrap items-center gap-2 text-xs text-[var(--label-gray)]">
+                <span class="rounded-full bg-white px-2.5 py-1 font-medium text-[var(--color-brand-blue)]">
+                  {p.data.category}
+                </span>
+                <span>{p.data.readingMinutes} мин</span>
+              </div>
+              <h3 class="mt-4 text-xl leading-snug">{p.data.title}</h3>
+              <p class="mt-3 flex-1 text-[15px] leading-[1.6] text-[var(--color-mute)]">
+                {p.data.description}
+              </p>
+              <span class="mt-5 inline-flex items-center gap-1.5 text-[15px] font-semibold text-[var(--color-brand-blue)] group-hover:text-[var(--color-accent)]">
+                Читать
+                <Icon name="arrow" size={16} />
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,353 @@
+---
+import { leadForm } from "@/data/content";
+import { site } from "@/config/site";
+---
+
+<div
+  id="lead-modal"
+  class="lead-modal fixed inset-0 z-[60] flex items-end justify-center p-0 sm:items-center sm:p-4"
+  aria-hidden="true"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="lead-modal-title"
+>
+  <div class="lead-overlay absolute inset-0 bg-[color:rgba(16,24,40,0.45)] backdrop-blur-sm" data-lead-close></div>
+
+  <div
+    class="lead-panel relative w-full max-w-md rounded-t-3xl bg-white p-6 shadow-[0_-24px_70px_-30px_rgba(16,24,40,0.45)] sm:rounded-3xl sm:p-8"
+  >
+    <button
+      class="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full border border-[var(--color-line)] text-[var(--color-mute)] transition-colors hover:text-[var(--color-head-ink)]"
+      aria-label="Закрыть"
+      data-lead-close
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+
+    <div data-lead-view="form">
+      <p class="t-sec">Бесплатно</p>
+      <h2 id="lead-modal-title" class="mt-3 font-sans text-[26px] font-semibold">{leadForm.title}</h2>
+      <p class="mt-2 text-sm text-[var(--color-mute)]">{leadForm.subtitle}</p>
+
+      <form class="mt-6 space-y-3" data-lead-form novalidate>
+        <div>
+          <input
+            type="text"
+            name="name"
+            autocomplete="name"
+            placeholder="Ваше имя"
+            class="lead-input"
+            required
+          />
+        </div>
+        <div>
+          <input
+            type="tel"
+            name="phone"
+            autocomplete="tel"
+            inputmode="tel"
+            placeholder="Телефон или мессенджер"
+            class="lead-input"
+            required
+          />
+        </div>
+        <div>
+          <textarea
+            name="message"
+            rows="2"
+            placeholder="Коротко о задаче (необязательно)"
+            class="lead-input resize-none"></textarea>
+        </div>
+
+        {/* Anti-bot: signed form token + self-hosted image CAPTCHA */}
+        <input type="hidden" name="form_token" value="" />
+        <input type="hidden" name="captcha_token" value="" />
+        <div id="lead-captcha" class="hidden">
+          <div class="flex items-center gap-3">
+            <img
+              data-captcha-image
+              alt="Код проверки"
+              width="200"
+              height="64"
+              class="h-16 w-[200px] rounded-xl border border-[var(--color-line)] bg-white"
+            />
+            <button
+              type="button"
+              data-captcha-refresh
+              class="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-[var(--color-line)] text-[var(--color-mute)] transition-colors hover:text-[var(--color-head-ink)]"
+              aria-label="Обновить код"
+              title="Обновить код"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+            </button>
+          </div>
+          <input
+            type="text"
+            name="captcha_answer"
+            inputmode="text"
+            autocomplete="off"
+            autocapitalize="characters"
+            spellcheck="false"
+            maxlength="8"
+            placeholder="Код с картинки"
+            aria-label="Код с картинки"
+            class="lead-input mt-3"
+          />
+        </div>
+
+        {/* Honeypot — hidden from humans, bots fill it */}
+        <input type="text" name="company_site" tabindex="-1" autocomplete="off" class="hp-field" aria-hidden="true" />
+
+        {/* Hidden attribution fields, filled by JS */}
+        <input type="hidden" name="source" value="modal" />
+        <input type="hidden" name="quiz" value="" />
+        <input type="hidden" name="page" value="" data-field-page />
+        <input type="hidden" name="referrer" value="" data-field-ref />
+        <input type="hidden" name="utm_source" value="" />
+        <input type="hidden" name="utm_medium" value="" />
+        <input type="hidden" name="utm_campaign" value="" />
+        <input type="hidden" name="utm_content" value="" />
+        <input type="hidden" name="utm_term" value="" />
+
+        <button type="submit" class="btn btn-primary w-full !py-3.5" data-lead-submit>
+          {leadForm.button}
+        </button>
+        <p class="text-center text-[11px] leading-relaxed text-[var(--label-gray)]">
+          {leadForm.consent}
+          <a href="/consent" class="underline transition-colors hover:text-[var(--color-brand-blue)]">обработки данных</a>
+        </p>
+        <p class="hidden text-center text-sm text-[#c40d12]" data-lead-error></p>
+      </form>
+    </div>
+
+    <div class="hidden py-6 text-center" data-lead-view="success">
+      <div class="mx-auto grid h-16 w-16 place-items-center rounded-full bg-[color:rgba(46,113,241,0.1)]">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand-blue)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 12 5 5L20 6"/></svg>
+      </div>
+      <h2 class="mt-5 font-sans text-[26px] font-semibold">{leadForm.success}</h2>
+      <p class="mt-2 text-sm text-[var(--color-mute)]">
+        Отвечаю лично в рабочее время.
+      </p>
+      <button class="btn btn-ghost mt-6" data-lead-close>Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .lead-modal {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+  }
+  .lead-modal.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+  .lead-panel {
+    transform: translateY(24px) scale(0.98);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .lead-modal.is-open .lead-panel {
+    transform: none;
+  }
+  .lead-input {
+    width: 100%;
+    background: var(--color-ink-900);
+    border: 1px solid var(--color-line);
+    border-radius: 14px;
+    padding: 0.85rem 1rem;
+    color: var(--color-paper);
+    font-size: 1rem;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+  .lead-input::placeholder { color: var(--color-faint); }
+  .lead-input:focus {
+    outline: none;
+    border-color: var(--color-brand-blue);
+    box-shadow: 0 0 0 3px rgba(46, 113, 241, 0.15);
+  }
+  .hp-field {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+  }
+</style>
+
+<script define:vars={{ endpoint: site.leadEndpoint }}>
+  // Capture UTM + referrer once on load, persist for the session.
+  (function () {
+    const params = new URLSearchParams(window.location.search);
+    const utmKeys = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"];
+    const store = {};
+    let hasNew = false;
+    utmKeys.forEach((k) => {
+      const v = params.get(k);
+      if (v) { store[k] = v; hasNew = true; }
+    });
+    try {
+      if (hasNew) sessionStorage.setItem("lead_utm", JSON.stringify(store));
+    } catch (e) {}
+
+    function getUtm() {
+      try {
+        return JSON.parse(sessionStorage.getItem("lead_utm") || "{}");
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function fillHidden(form) {
+      const utm = getUtm();
+      Object.entries(utm).forEach(([k, v]) => {
+        const f = form.querySelector(`[name="${k}"]`);
+        if (f) f.value = v;
+      });
+      const page = form.querySelector("[data-field-page]");
+      if (page) page.value = window.location.pathname + window.location.search;
+      const ref = form.querySelector("[data-field-ref]");
+      if (ref) ref.value = document.referrer || "";
+      // Pull quiz answers if present
+      try {
+        const q = sessionStorage.getItem("lead_quiz");
+        const qf = form.querySelector('[name="quiz"]');
+        if (q && qf) qf.value = q;
+      } catch (e) {}
+    }
+
+    const modal = document.getElementById("lead-modal");
+    const form = modal && modal.querySelector("[data-lead-form]");
+    if (!modal || !form) return;
+
+    const errorEl = form.querySelector("[data-lead-error]");
+    const submitBtn = form.querySelector("[data-lead-submit]");
+    const submitLabel = submitBtn.textContent;
+    const tokenField = form.querySelector('[name="form_token"]');
+    const captchaBlock = document.getElementById("lead-captcha");
+    const captchaImage = modal.querySelector("[data-captcha-image]");
+    const captchaTokenField = form.querySelector('[name="captcha_token"]');
+    const captchaAnswerField = form.querySelector('[name="captcha_answer"]');
+    const captchaRefresh = modal.querySelector("[data-captcha-refresh]");
+
+    let challengePromise = null;
+
+    function loadChallenge(force = false) {
+      if (!force && challengePromise) return challengePromise;
+
+      challengePromise = fetch(endpoint + "?challenge=1", {
+        method: "GET",
+        headers: { Accept: "application/json" },
+        cache: "no-store",
+      })
+        .then((res) => (res.ok ? res.json() : {}))
+        .catch(() => ({}))
+        .then((data) => {
+          if (data && data.token && tokenField) tokenField.value = data.token;
+
+          if (data && data.captcha && data.captcha.token && data.captcha.image) {
+            if (captchaTokenField) captchaTokenField.value = data.captcha.token;
+            if (captchaImage) captchaImage.src = data.captcha.image;
+            if (captchaBlock) captchaBlock.classList.remove("hidden");
+          } else if (captchaBlock) {
+            // Server-side CAPTCHA is off (no secret configured).
+            captchaBlock.classList.add("hidden");
+          }
+
+          if (captchaAnswerField) captchaAnswerField.value = "";
+          return data || {};
+        });
+
+      return challengePromise;
+    }
+
+    async function ensureChallenge() {
+      let data = await loadChallenge();
+      if (!data.token) data = await loadChallenge(true);
+      return data;
+    }
+
+    if (captchaRefresh) {
+      captchaRefresh.addEventListener("click", () => { void loadChallenge(true); });
+    }
+
+    // Fetch a fresh token + CAPTCHA every time the modal opens: the user
+    // spends at least a second typing, so the signed timestamp check stays
+    // invisible, and the code image is never stale.
+    modal.addEventListener("lead:open", () => { void loadChallenge(true); });
+    if (modal.classList.contains("is-open")) void loadChallenge(true);
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      errorEl.classList.add("hidden");
+
+      const name = form.querySelector('[name="name"]').value.trim();
+      const phone = form.querySelector('[name="phone"]').value.trim();
+      if (name.length < 2) {
+        errorEl.textContent = "Введите имя";
+        errorEl.classList.remove("hidden");
+        return;
+      }
+      if (phone.length < 5) {
+        errorEl.textContent = "Введите телефон или контакт для связи";
+        errorEl.classList.remove("hidden");
+        return;
+      }
+
+      const captchaAnswer = captchaAnswerField ? captchaAnswerField.value.trim() : "";
+      if (captchaBlock && !captchaBlock.classList.contains("hidden") && captchaAnswer.length < 3) {
+        errorEl.textContent = "Введите код с картинки";
+        errorEl.classList.remove("hidden");
+        return;
+      }
+
+      fillHidden(form);
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Отправляю…";
+      let serverMessage = "";
+      let serverCode = "";
+
+      try {
+        await ensureChallenge();
+        if (captchaBlock && !captchaBlock.classList.contains("hidden") && !captchaAnswerField.value.trim()) {
+          errorEl.textContent = "Введите код с картинки";
+          errorEl.classList.remove("hidden");
+          return;
+        }
+
+        const res = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams(new FormData(form)),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.ok) {
+          modal.querySelector('[data-lead-view="form"]').classList.add("hidden");
+          modal.querySelector('[data-lead-view="success"]').classList.remove("hidden");
+          if (typeof window.ym === "function" && window.__metrikaId)
+            window.ym(window.__metrikaId, "reachGoal", "lead");
+          if (typeof window.gtag === "function")
+            window.gtag("event", "generate_lead");
+          form.reset();
+        } else {
+          serverMessage = data.error || "";
+          serverCode = data.code || "";
+          throw new Error(serverMessage || "send failed");
+        }
+      } catch (err) {
+        if (serverCode === "captcha") {
+          errorEl.textContent = "Неверный код. Введите новый код с картинки.";
+          await loadChallenge(true).catch(() => {});
+        } else {
+          errorEl.textContent = serverMessage || "Не удалось отправить. Попробуйте ещё раз.";
+        }
+        errorEl.classList.remove("hidden");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = submitLabel;
+      }
+    });
+  })();
+</script>

@@ -1,0 +1,113 @@
+---
+import type { CaseStudy } from "@/data/content";
+import Icon from "@/components/Icon.astro";
+
+interface Props {
+  item: CaseStudy;
+  index?: number;
+}
+const { item, index = 0 } = Astro.props;
+const accentVar = item.accent === "volt" ? "--color-accent" : "--color-brand-blue";
+---
+
+<article
+  class="case-card reveal"
+  style={`--sd:${120 + index * 110}ms;`}
+>
+  <div class="flex items-center justify-between gap-3">
+    <span class="tag">{item.advertising}</span>
+    <span class="text-xs text-[var(--label-gray)]">{item.geo}</span>
+  </div>
+
+  {
+    item.logo && (
+      <div class="case-card-logo">
+        <img src={item.logo} alt={`Логотип ${item.title}`} loading="lazy" decoding="async" />
+      </div>
+    )
+  }
+
+  <h3 class="mt-4 text-[22px] leading-tight">{item.title}</h3>
+  <p class="mt-1.5 text-[14px] text-[var(--color-mute)]">{item.project}</p>
+
+  <div class="mt-6 flex items-end gap-4 border-t border-[rgba(17,17,17,0.12)] pt-5">
+    <div>
+      <p class="stat-num text-[clamp(28px,5vw,40px)]" style={`color: var(${accentVar});`}>
+        {item.metric.value}
+      </p>
+      <p class="mt-1 text-xs text-[var(--color-mute)]">{item.metric.label}</p>
+    </div>
+    {
+      item.secondary && item.secondary.length > 0 && (
+        <div class="ml-auto flex flex-col items-end gap-2 text-right">
+          {item.secondary.map((s) => (
+            <div>
+              <p class="text-base font-semibold">{s.value}</p>
+              <p class="text-[11px] text-[var(--label-gray)]">{s.label}</p>
+            </div>
+          ))}
+        </div>
+      )
+    }
+  </div>
+
+  <a
+    href={`/cases/${item.id}`}
+    class="link-arrow"
+    style={`color: var(${accentVar});`}
+  >
+    Подробнее о кейсе
+    <Icon name="arrow" size={16} />
+  </a>
+</article>
+
+<style>
+  .case-card {
+    background: var(--band-filled);
+    border-radius: 12px;
+    padding: 24px 22px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .case-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 40px -24px rgba(16, 24, 40, 0.3);
+  }
+  .tag {
+    border-radius: 999px;
+    border: 1px solid rgba(17, 17, 17, 0.12);
+    background: #fff;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-mute);
+  }
+  .link-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .case-card-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 72px;
+    margin-top: 16px;
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid rgba(17, 17, 17, 0.12);
+    overflow: hidden;
+  }
+  .case-card-logo img {
+    max-height: 52px;
+    max-width: 200px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+</style>

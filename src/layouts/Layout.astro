@@ -1,0 +1,172 @@
+---
+import "@/styles/global.css";
+import Seo from "@/components/Seo.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import LeadModal from "@/components/LeadModal.astro";
+import StickyCta from "@/components/StickyCta.astro";
+import { site } from "@/config/site";
+
+interface Props {
+  title?: string;
+  description?: string;
+  path?: string;
+  ogImage?: string;
+  noindex?: boolean;
+  schema?: Record<string, unknown>[];
+  /** Hide the global header/footer chrome (e.g. for 404). */
+  bare?: boolean;
+}
+
+const {
+  title,
+  description,
+  path = Astro.url.pathname,
+  ogImage,
+  noindex,
+  schema,
+  bare = false,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang={site.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+    <link rel="preconnect" href="https://274418.selcdn.ru" crossorigin />
+
+    {/* --- Analytics slots (заказчик подключит Я.Метрику и GA4 сам) --- */}
+    {/* <!-- METRIKA_SLOT --> */}
+    {/* <!-- GA4_SLOT --> */}
+
+    <Seo
+      title={title}
+      description={description}
+      path={path}
+      ogImage={ogImage}
+      noindex={noindex}
+      schema={schema}
+    />
+  </head>
+  <body class="min-h-screen">
+    {!bare && <Header />}
+    <main>
+      <slot />
+    </main>
+    {!bare && <Footer />}
+    <LeadModal />
+    {!bare && <StickyCta />}
+
+    <script>
+      // Back/forward restore skips the reveal staircase entirely.
+      if (performance.getEntriesByType("navigation")[0]?.type === "back_forward") {
+        document.documentElement.classList.add("seq-restore");
+      }
+
+      // Reveal-on-scroll: progressive enhancement, respects reduced motion.
+      const els = document.querySelectorAll(".reveal");
+      if (
+        "IntersectionObserver" in window &&
+        !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const e of entries) {
+              if (e.isIntersecting) {
+                e.target.classList.add("is-visible");
+                io.unobserve(e.target);
+              }
+            }
+          },
+          { rootMargin: "0px 0px -8% 0px", threshold: 0.08 },
+        );
+        els.forEach((el) => io.observe(el));
+      } else {
+        els.forEach((el) => el.classList.add("is-visible"));
+      }
+    </script>
+
+    <script>
+      // Global lead-modal opener. Any element with [data-lead] opens the modal,
+      // optionally passing a source label via data-lead="source-name".
+      let lastOpener: HTMLElement | null = null;
+
+      function openLead(source?: string, opener?: HTMLElement | null) {
+        const modal = document.getElementById("lead-modal");
+        if (!modal) return;
+        lastOpener = opener ?? (document.activeElement as HTMLElement | null);
+        const src = modal.querySelector<HTMLInputElement>('input[name="source"]');
+        if (src && source) src.value = source;
+        modal.classList.add("is-open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        // Reopening after a successful submit should show the form again.
+        modal.querySelector('[data-lead-view="form"]')?.classList.remove("hidden");
+        modal.querySelector('[data-lead-view="success"]')?.classList.add("hidden");
+        modal.querySelector("[data-lead-error]")?.classList.add("hidden");
+        // LeadModal fetches a signed form token and a fresh CAPTCHA on open.
+        modal.dispatchEvent(new CustomEvent("lead:open"));
+        const first = modal.querySelector<HTMLInputElement>("input[name='name']");
+        window.setTimeout(() => first?.focus(), 80);
+      }
+      function closeLead() {
+        const modal = document.getElementById("lead-modal");
+        if (!modal || !modal.classList.contains("is-open")) return;
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        const opener = lastOpener;
+        lastOpener = null;
+        opener?.focus();
+      }
+      document.addEventListener("click", (e) => {
+        const opener = (e.target as HTMLElement).closest("[data-lead]") as HTMLElement | null;
+        if (opener) {
+          e.preventDefault();
+          openLead(opener.getAttribute("data-lead") || "button", opener);
+        }
+        if ((e.target as HTMLElement).closest("[data-lead-close]")) {
+          e.preventDefault();
+          closeLead();
+        }
+      });
+      document.addEventListener("keydown", (e) => {
+        const modal = document.getElementById("lead-modal");
+        if (!modal || !modal.classList.contains("is-open")) return;
+        if (e.key === "Escape") {
+          closeLead();
+          return;
+        }
+        if (e.key !== "Tab") return;
+        const nodes = modal.querySelectorAll<HTMLElement>(
+          'button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])',
+        );
+        const list = Array.from(nodes).filter(
+          (el) =>
+            !el.hasAttribute("disabled") &&
+            el.tabIndex >= 0 &&
+            el.getAttribute("aria-hidden") !== "true" &&
+            el.getClientRects().length > 0,
+        );
+        if (list.length === 0) return;
+        const first = list[0];
+        const last = list[list.length - 1];
+        const active = document.activeElement as HTMLElement | null;
+        const inside = active ? modal.contains(active) : false;
+        if (e.shiftKey && (active === first || !inside)) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && (active === last || !inside)) {
+          e.preventDefault();
+          first.focus();
+        }
+      });
+      (window as any).openLead = openLead;
+    </script>
+  </body>
+</html>

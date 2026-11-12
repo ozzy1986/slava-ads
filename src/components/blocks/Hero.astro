@@ -1,0 +1,103 @@
+---
+import { specialist } from "@/data/content";
+import Icon from "@/components/Icon.astro";
+---
+
+<section class="relative pt-28 md:pt-36" id="top">
+  <div class="container-x">
+    <div class="hero-layout">
+      <div class="hero-main reveal">
+        <p class="t-sec">Реклама, сайт и аналитика</p>
+
+        <h1 class="t-serif-hero mt-4">Заявки из контекстной рекламы под ключ</h1>
+
+        <p class="hero-copy">
+          Запускаю и оптимизирую Яндекс Директ и Google Ads, дорабатываю
+          посадочные страницы и настраиваю учёт обращений. Решения по рекламе
+          принимаем с учётом стоимости и качества заявок.
+        </p>
+
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+          <button class="btn btn-primary !px-7 !py-4" data-lead="hero-primary">
+            Получить разбор проекта
+            <Icon name="arrow" size={20} />
+          </button>
+          <a href="#cases" class="btn btn-ghost !px-7 !py-4">Смотреть результаты</a>
+        </div>
+
+        <p class="mt-5 text-sm text-[var(--color-mute)]">Россия, СНГ и США</p>
+      </div>
+
+      <div class="hero-profile reveal" style="--sd:120ms;">
+        <div class="hero-photo">
+          <img
+            src={specialist.photo}
+            alt={specialist.fullName}
+            width="680"
+            height="680"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+            class="h-auto w-full"
+          />
+        </div>
+        <div class="hero-profile-caption">
+          <p class="font-display text-lg">{specialist.fullName}</p>
+          <p class="mt-1 text-sm text-[var(--color-mute)]">{specialist.role}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-layout {
+    display: grid;
+    gap: 32px;
+    align-items: center;
+  }
+
+  .hero-main { min-width: 0; }
+
+  .t-serif-hero {
+    max-width: 23ch;
+    color: var(--color-head-ink);
+    text-wrap: balance;
+  }
+
+  .hero-copy {
+    max-width: 42rem;
+    margin-top: 24px;
+    color: var(--color-body-ink);
+    font-size: 16px;
+    line-height: 1.8;
+  }
+
+  .hero-profile {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .hero-photo {
+    width: 112px;
+    flex-shrink: 0;
+    padding: 12px;
+    border: 1px solid var(--color-line);
+    border-radius: 20px;
+    background: #fff;
+  }
+
+  .hero-profile-caption { min-width: 0; }
+
+  @media (min-width: 1024px) {
+    .hero-layout {
+      grid-template-columns: minmax(0, 1fr) 248px;
+      gap: 48px;
+    }
+
+    .hero-profile { display: block; }
+    .hero-photo { width: 100%; padding: 16px; }
+    .hero-profile-caption { margin-top: 16px; }
+  }
+</style>

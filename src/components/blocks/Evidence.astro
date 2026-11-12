@@ -1,0 +1,156 @@
+---
+import { cases } from "@/data/content";
+import Icon from "@/components/Icon.astro";
+
+const featured = ["tmm", "hhn", "sarmat"]
+  .map((id) => cases.find((c) => c.id === id))
+  .filter((c): c is (typeof cases)[number] => Boolean(c));
+---
+
+<section class="section scroll-mt-28" id="evidence">
+  <div class="container-x">
+    <div class="reveal max-w-2xl">
+      <p class="t-sec">Опыт в цифрах</p>
+      <h2 class="t-serif-title mt-4">Результаты в разных нишах</h2>
+    </div>
+
+    <div class="evidence-grid mt-10">
+      {
+        featured.map((c, i) => (
+          <article class="evidence-card reveal" style={`--sd:${120 + i * 110}ms;`}>
+            {c.logo && (
+              <span class="evidence-logo">
+                <img src={c.logo} alt={`Логотип ${c.title}`} loading="lazy" decoding="async" />
+              </span>
+            )}
+            <h3 class="evidence-title">{c.title}</h3>
+            <p class="evidence-meta">{c.advertising} · {c.geo}</p>
+            <p class="evidence-niche">{c.project}</p>
+
+            <div class="evidence-result">
+              <p
+                class="stat-num evidence-num"
+                style={`color: var(${c.accent === "volt" ? "--color-volt-400" : "--color-signal-400"});`}
+              >
+                {c.metric.value}
+              </p>
+              <p class="evidence-label">{c.metric.label}</p>
+              {c.secondary?.map((s) => (
+                <p class="evidence-price"><b>{s.value}</b> {s.label}</p>
+              ))}
+            </div>
+
+            <a href={`/cases/${c.id}`} class="evidence-link">
+              Подробнее о кейсе
+              <Icon name="arrow" size={16} />
+            </a>
+          </article>
+        ))
+      }
+    </div>
+
+    <p class="reveal mt-8 max-w-3xl text-[14px] leading-[1.7] text-[var(--color-mute)]" style="--sd:200ms;">
+      Результаты отдельных проектов. Стоимость и количество обращений зависят
+      от ниши, региона, предложения и периода работы.
+    </p>
+  </div>
+</section>
+
+<style>
+  .evidence-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  @media (min-width: 768px) {
+    .evidence-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .evidence-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--band-filled);
+    border-radius: var(--radius-card);
+    padding: 24px 22px;
+  }
+
+  .evidence-logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-start;
+    background: #fff;
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+    padding: 8px 14px;
+    margin-bottom: 18px;
+    min-height: 48px;
+  }
+  .evidence-logo img {
+    max-height: 36px;
+    max-width: 160px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .evidence-title {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--color-head-ink);
+    margin: 0;
+  }
+  .evidence-meta {
+    margin: 8px 0 0;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--color-mute);
+  }
+  .evidence-niche {
+    margin: 12px 0 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--color-body-ink);
+  }
+
+  .evidence-result {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--color-line);
+  }
+  .evidence-num { font-size: clamp(34px, 4vw, 44px); }
+  .evidence-label {
+    margin: 8px 0 0;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--color-mute);
+  }
+  .evidence-price {
+    margin: 14px 0 0;
+    font-size: 13px;
+    color: var(--color-mute);
+  }
+  .evidence-price b {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-head-ink);
+    margin-right: 6px;
+  }
+
+  .evidence-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 22px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-brand-blue);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .evidence-link:hover { color: var(--color-accent); }
+</style>

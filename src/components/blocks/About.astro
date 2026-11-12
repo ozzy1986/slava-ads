@@ -1,0 +1,47 @@
+---
+import { about, cta, specialist } from "@/data/content";
+---
+
+<section class="section scroll-mt-28" id="about">
+  <div class="narrow">
+    <div class="reveal flex items-center gap-4">
+      <img
+        src={specialist.photo}
+        alt="Вячеслав Острополец"
+        width="680"
+        height="680"
+        loading="lazy"
+        decoding="async"
+        class="w-[96px] shrink-0 rounded-full"
+      />
+      <div>
+        <p class="t-sec">Об авторе</p>
+        <h2 class="mt-2 font-display text-[28px] leading-tight">{about.greeting}</h2>
+      </div>
+    </div>
+
+    <p class="reveal mt-6 text-[16px] font-medium leading-[1.75]" style="--sd:120ms;">
+      {about.lead}
+    </p>
+
+    <div class="about-body reveal mt-6 space-y-4" style="--sd:200ms;">
+      {
+        about.paragraphs.map((p) => (
+          <p class="text-[16px] leading-[1.75] text-[var(--color-body-ink)] opacity-90">{p}</p>
+        ))
+      }
+    </div>
+
+    <img
+      src={about.workspacePhoto}
+      alt="Рабочее место Вячеслава — неоновая вывеска Slava Ads"
+      width="1200"
+      height="1520"
+      loading="lazy"
+      decoding="async"
+      class="reveal mt-8 h-[320px] w-full rounded-[16px] object-cover object-[center_20%] sm:h-[420px]"
+    />
+
+    <button class="btn btn-primary reveal mt-8" style="--sd:120ms;" data-lead="about">{cta.button}</button>
+  </div>
+</section>

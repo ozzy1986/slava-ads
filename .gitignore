@@ -1,0 +1,31 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+vendor/
+
+# php test artifacts
+.phpunit.cache/
+
+# local npm registry override (mirror for dev network); server uses default registry
+.npmrc
+
+# secrets — never commit
+public/api/.env
+api/.env
+*.local
+
+# logs
+*.log
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# scrape working files (source data kept: slavaads-site-content.json)
+_scrape/

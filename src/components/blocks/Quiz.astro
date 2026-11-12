@@ -1,0 +1,95 @@
+---
+import { quizSteps, quizIntro } from "@/data/quiz";
+---
+
+<section class="section" id="quiz">
+  <div class="container-x">
+    <div class="reveal rounded-[24px] bg-[var(--band-filled)] p-6 md:p-12">
+      <div class="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+        <div>
+          <p class="t-sec">{quizIntro.eyebrow}</p>
+          <h2 class="t-serif-title mt-4">{quizIntro.title}</h2>
+          <p class="mt-4 text-[16px] leading-[1.75] text-[var(--color-mute)]">
+            {quizIntro.subtitle}
+          </p>
+
+          <div class="mt-7 flex items-center gap-3">
+            <div class="h-1.5 w-full max-w-[220px] overflow-hidden rounded-full bg-[var(--color-ink-700)]">
+              <div class="h-full rounded-full bg-[var(--color-brand-blue)] transition-all duration-500" style="width: 50%;" data-quiz-progress></div>
+            </div>
+            <span class="text-xs font-medium text-[var(--label-gray)]" data-quiz-counter>1 / {quizSteps.length}</span>
+          </div>
+        </div>
+
+        <div class="quiz-stage relative min-h-[260px]" data-quiz>
+          {
+            quizSteps.map((step, si) => (
+              <div
+                class="quiz-step"
+                data-quiz-step={si}
+                hidden={si !== 0}
+              >
+                <p class="text-sm font-medium text-[var(--label-gray)]">{step.hint}</p>
+                <h3 class="mt-2 text-xl md:text-2xl">{step.question}</h3>
+                <div class="mt-5 grid gap-3 sm:grid-cols-2">
+                  {step.options.map((opt) => (
+                    <button
+                      class="quiz-option flex items-center gap-3 rounded-2xl border border-[var(--color-line)] bg-white p-4 text-left transition-all hover:border-[var(--color-brand-blue)]"
+                      data-quiz-value={opt.value}
+                      data-quiz-key={step.id}
+                    >
+                      <span class="text-xl">{opt.emoji}</span>
+                      <span class="text-sm font-medium">{opt.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    const root = document.querySelector("[data-quiz]");
+    if (!root) return;
+    const steps = Array.from(root.querySelectorAll("[data-quiz-step]"));
+    const progress = document.querySelector("[data-quiz-progress]") as HTMLElement | null;
+    const counter = document.querySelector("[data-quiz-counter]");
+    const total = steps.length;
+    let current = 0;
+    const answers: Record<string, string> = {};
+
+    function show(idx: number) {
+      steps.forEach((s, i) => ((s as HTMLElement).hidden = i !== idx));
+      if (progress) progress.style.width = `${((idx + 1) / total) * 100}%`;
+      if (counter) counter.textContent = `${idx + 1} / ${total}`;
+    }
+
+    root.querySelectorAll(".quiz-option").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const key = btn.getAttribute("data-quiz-key") || "";
+        const val = btn.getAttribute("data-quiz-value") || "";
+        answers[key] = val;
+
+        if (current < total - 1) {
+          current += 1;
+          show(current);
+        } else {
+          // Finished — store answers and open the lead modal.
+          try {
+            sessionStorage.setItem("lead_quiz", JSON.stringify(answers));
+          } catch (e) {}
+          (window as any).openLead?.("quiz");
+        }
+      });
+    });
+  })();
+</script>
+
+<style>
+  .quiz-option:active { transform: scale(0.98); }
+</style>

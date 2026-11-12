@@ -1,0 +1,86 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { homeBlocks } from "@/config/home";
+import { site } from "@/config/site";
+import { organization, organizationId, person, website, websiteId, personId } from "@/config/schema";
+import { faq, reviews, services } from "@/data/content";
+
+import Hero from "@/components/blocks/Hero.astro";
+import Evidence from "@/components/blocks/Evidence.astro";
+import Audience from "@/components/blocks/Audience.astro";
+import Economics from "@/components/blocks/Economics.astro";
+import Services from "@/components/blocks/Services.astro";
+import Cases from "@/components/blocks/Cases.astro";
+import Workflow from "@/components/blocks/Workflow.astro";
+import Reviews from "@/components/blocks/Reviews.astro";
+import Qualification from "@/components/blocks/Qualification.astro";
+import About from "@/components/blocks/About.astro";
+import Faq from "@/components/blocks/Faq.astro";
+import Cta from "@/components/blocks/Cta.astro";
+
+// Registry: maps a BlockKey to its component. Order is driven by src/config/home.ts
+const registry = {
+  hero: Hero,
+  evidence: Evidence,
+  audience: Audience,
+  economics: Economics,
+  services: Services,
+  cases: Cases,
+  workflow: Workflow,
+  reviews: Reviews,
+  qualification: Qualification,
+  about: About,
+  faq: Faq,
+  cta: Cta,
+} as const;
+
+// ---- Structured data (JSON-LD) ----
+const proService = {
+  "@context": "https://schema.org",
+  ...organization,
+  makesOffer: services.map((s) => ({
+    "@type": "Offer",
+    itemOffered: { "@type": "Service", name: s.title, description: s.short },
+  })),
+  review: reviews.map((r) => ({
+    "@type": "Review",
+    reviewBody: r.text,
+    author: { "@type": "Person", name: r.author },
+  })),
+};
+
+const webpage = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": `${site.url}/#webpage`,
+  url: `${site.url}/`,
+  name: site.defaultTitle,
+  description: site.defaultDescription,
+  inLanguage: site.lang,
+  isPartOf: { "@id": websiteId },
+  about: { "@id": personId },
+  mainEntity: { "@id": organizationId },
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faq.map((f) => ({
+    "@type": "Question",
+    name: f.question,
+    acceptedAnswer: { "@type": "Answer", text: f.answer },
+  })),
+};
+---
+
+<Layout
+  title={undefined}
+  description={site.defaultDescription}
+  path="/"
+  schema={[proService, person, website, webpage, faqSchema]}
+>
+  {homeBlocks.map((key) => {
+    const Block = registry[key];
+    return <Block />;
+  })}
+</Layout>

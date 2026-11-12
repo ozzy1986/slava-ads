@@ -1,0 +1,35 @@
+---
+/**
+ * Reusable FAQ accordion. Shared by the homepage FAQ block and service
+ * pages (DRY). Styles live in global.css (.faq-item).
+ */
+interface FaqItem {
+  question: string;
+  answer: string;
+}
+interface Props {
+  items: FaqItem[];
+  /** Group name so only one item stays open at a time. */
+  name?: string;
+  class?: string;
+}
+const { items, name = "faq", class: className = "" } = Astro.props;
+---
+
+<div class:list={["space-y-3", className]}>
+  {
+    items.map((item, i) => (
+      <details class="faq-item reveal resume-skills-card overflow-hidden" name={name} open={i === 0} style={`--sd:${120 + i * 90}ms;`}>
+        <summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-5">
+          <span class="text-[18px] font-semibold leading-snug md:text-[20px]">{item.question}</span>
+          <span class="faq-icon grid h-8 w-8 shrink-0 place-items-center rounded-full border border-[rgba(17,17,17,0.14)] bg-white text-[var(--color-mute)] transition-transform">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          </span>
+        </summary>
+        <div class="px-5 pb-5 text-[15px] leading-[1.7] text-[var(--color-body-ink)] opacity-85">
+          {item.answer}
+        </div>
+      </details>
+    ))
+  }
+</div>

@@ -1,0 +1,72 @@
+---
+import { audience } from "@/data/content";
+import Icon from "@/components/Icon.astro";
+---
+
+<section class="section scroll-mt-28" id="audience">
+  <div class="container-x">
+    <div class="reveal max-w-2xl">
+      <p class="t-sec">Для кого</p>
+      <h2 class="t-serif-title mt-4">Когда стоит объединить рекламу, сайт и аналитику</h2>
+    </div>
+
+    <div class="audience-grid mt-10">
+      {
+        audience.situations.map((s, i) => (
+          <article class="resume-skills-card reveal" style={`--sd:${120 + i * 110}ms;`}>
+            <span class="grid h-9 w-9 place-items-center rounded-full bg-white text-[var(--color-brand-blue)]">
+              <Icon name={s.icon} size={18} />
+            </span>
+            <p class="mt-4 text-[15px] leading-[1.6]">{s.text}</p>
+          </article>
+        ))
+      }
+    </div>
+
+    <div class="audience-note reveal" style="--sd:200ms;">
+      <span class="audience-note-icon"><Icon name="check" size={18} /></span>
+      <p>{audience.requirement}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .audience-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  @media (min-width: 640px) {
+    .audience-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 1024px) {
+    .audience-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+
+  .audience-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-top: 28px;
+    padding: 20px 22px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    background: #fff;
+  }
+  .audience-note-icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--band-filled);
+    color: var(--color-brand-blue);
+  }
+  .audience-note p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--color-body-ink);
+  }
+</style>

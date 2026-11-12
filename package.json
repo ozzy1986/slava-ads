@@ -1,0 +1,25 @@
+{
+  "name": "slava-ads",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Лидген-сайт интернет-маркетолога Вячеслава Острополец",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^4.2.6",
+    "@astrojs/sitemap": "^3.4.1",
+    "@fontsource-variable/manrope": "^5.2.6",
+    "@fontsource-variable/montserrat": "^5.3.0",
+    "@fontsource-variable/unbounded": "^5.2.6",
+    "@fontsource/playfair-display": "^5.3.0",
+    "@fontsource/poppins": "^5.3.0",
+    "@tailwindcss/vite": "^4.1.11",
+    "astro": "^5.12.0",
+    "tailwindcss": "^4.1.11"
+  }
+}

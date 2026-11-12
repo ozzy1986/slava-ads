@@ -1,0 +1,176 @@
+---
+import { cases } from "@/data/content";
+import Icon from "@/components/Icon.astro";
+
+const accentVar = (c: (typeof cases)[number]) =>
+  c.accent === "volt" ? "--color-volt-400" : "--color-signal-400";
+---
+
+<section id="cases" class="scroll-mt-28">
+  <div class="container-x">
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <div class="reveal max-w-2xl">
+        <p class="t-sec">Портфолио</p>
+        <h2 class="t-serif-title mt-4">Кейсы</h2>
+        <p class="mt-4 text-[16px] leading-[1.75] text-[var(--color-mute)]">
+          Каждый проект — в формате задача → решение → результат → вывод. Цифры уточняю
+          по периоду и методике; результаты отдельных проектов не гарантируют таких же в другой нише.
+        </p>
+      </div>
+      <a href="/cases" class="btn btn-ghost reveal">Все кейсы</a>
+    </div>
+  </div>
+
+  {
+    cases.map((c, i) => (
+      <div class:list={["resume-exp-band", i % 2 === 1 && "resume-exp-band--filled"]}>
+        <article class="resume-exp-entry reveal">
+          {c.logo && (
+            <span class="case-logo-chip">
+              <img src={c.logo} alt={`Логотип ${c.title}`} loading="lazy" decoding="async" />
+            </span>
+          )}
+          <h3>{c.title}</h3>
+          <p class="exp-meta">
+            {c.advertising} · {c.geo}
+          </p>
+          <p class="b">{c.project}.</p>
+
+          <div class="case-flow">
+            <div class="case-step">
+              <p class="case-step-label">Задача</p>
+              <p class="case-step-text">{c.goal}</p>
+            </div>
+
+            <div class="case-step">
+              <p class="case-step-label">Решение</p>
+              <p class="case-step-text">{c.solution}</p>
+            </div>
+
+            <div class="case-step case-step--result">
+              <p class="case-step-label">Результат</p>
+              <p class="stat-num case-result-num" style={`color: var(${accentVar(c)});`}>
+                {c.metric.value}
+              </p>
+              <p class="case-result-label">{c.metric.label}</p>
+              {c.secondary?.map((s) => (
+                <p class="case-sub">
+                  <b>{s.value}</b>
+                  {s.label}
+                </p>
+              ))}
+              <p class="case-result-note">{c.resultNote}</p>
+            </div>
+
+            <div class="case-step">
+              <p class="case-step-label">Вывод</p>
+              <p class="case-step-text">{c.takeaway}</p>
+            </div>
+          </div>
+
+          <a href={`/cases/${c.id}`} class="link-arrow">
+            Подробнее о кейсе
+            <Icon name="arrow" size={16} />
+          </a>
+        </article>
+      </div>
+    ))
+  }
+</section>
+
+<style>
+  .case-flow {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px 28px;
+    margin-top: 28px;
+  }
+  @media (min-width: 768px) {
+    .case-flow { grid-template-columns: 1fr 1fr; align-items: start; }
+  }
+
+  .case-step-label {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--label-gray);
+  }
+  .case-step-text {
+    margin: 8px 0 0;
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--color-body-ink);
+  }
+
+  .case-step--result {
+    background: #fff;
+    border: 1px solid rgba(17, 17, 17, 0.12);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 14px 34px -26px rgba(16, 24, 40, 0.3);
+  }
+  .case-result-num {
+    margin: 10px 0 0;
+    font-size: clamp(30px, 4vw, 40px);
+    line-height: 1;
+  }
+  .case-result-label {
+    margin: 6px 0 0;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--color-mute);
+  }
+  .case-sub {
+    margin: 10px 0 0;
+    font-size: 13px;
+    color: var(--color-mute);
+  }
+  .case-sub b {
+    margin-right: 6px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-head-ink);
+  }
+  .case-result-note {
+    margin: 14px 0 0;
+    padding-top: 12px;
+    border-top: 1px solid rgba(17, 17, 17, 0.1);
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--color-mute);
+  }
+
+  .link-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-brand-blue);
+    text-decoration: none;
+  }
+  .link-arrow:hover { color: var(--color-accent); }
+
+  .case-logo-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border: 1px solid rgba(17, 17, 17, 0.12);
+    border-radius: 12px;
+    padding: 12px 18px;
+    margin-bottom: 18px;
+    min-height: 64px;
+    box-shadow: inset 0 0 0 1px rgba(17, 17, 17, 0.03);
+  }
+  .case-logo-chip img {
+    max-height: 56px;
+    max-width: 220px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+</style>

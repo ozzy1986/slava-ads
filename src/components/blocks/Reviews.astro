@@ -1,0 +1,57 @@
+---
+import { reviews } from "@/data/content";
+import Icon from "@/components/Icon.astro";
+
+const initials = (name: string) => name.trim().charAt(0).toUpperCase();
+---
+
+<section class="section scroll-mt-28" id="reviews">
+  <div class="container-x">
+    <p class="t-sec reveal">Отзывы</p>
+    <h2 class="t-serif-title reveal mt-4" style="--sd:120ms;">Что говорят клиенты</h2>
+    <p class="reveal mt-4 max-w-xl text-[16px] leading-[1.75] text-[var(--color-mute)]" style="--sd:200ms;">
+      Слова из реальных переписок в WhatsApp и Telegram.
+    </p>
+
+    <div class="endo-grid">
+      {
+        reviews.map((r, i) => (
+          <figure class="endo reveal" style={`--sd:${120 + i * 110}ms;`}>
+            <div class="flex items-center gap-3">
+              <div class="face grid h-11 w-11 place-items-center rounded-full text-base font-semibold">
+                {initials(r.author)}
+              </div>
+              <div>
+                <figcaption class="text-sm font-semibold">{r.author}</figcaption>
+                <p class="text-xs text-[var(--label-gray)]">{r.company}</p>
+              </div>
+              <span
+                class:list={[
+                  "ml-auto grid h-8 w-8 place-items-center rounded-full bg-white",
+                  r.channel === "WhatsApp" ? "text-[#25d366]" : "text-[#229ed9]",
+                ]}
+                title={r.channel}
+              >
+                <Icon name={r.channel === "WhatsApp" ? "whatsapp" : "telegram"} size={18} />
+              </span>
+            </div>
+            <blockquote class="mt-4 text-[15px] leading-[1.7]">«{r.text}»</blockquote>
+          </figure>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .endo {
+    background: var(--band-filled);
+    border-radius: 12px;
+    padding: 22px 20px;
+    margin: 0;
+  }
+  .face {
+    background: #fff;
+    color: var(--color-brand-blue);
+  }
+</style>
