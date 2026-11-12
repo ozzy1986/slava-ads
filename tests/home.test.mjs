@@ -111,6 +111,16 @@ test("the evidence section carries the project-results disclaimer", () => {
   ));
 });
 
+test("the evidence section links to the full case catalog as a ghost pill", () => {
+  assert.ok(evidence);
+  const links = [...evidence.matchAll(/<a\b[^>]*\bhref="\/cases"[^>]*>[\s\S]*?<\/a>/g)].map((m) => m[0]);
+  assert.equal(links.length, 1, "Exactly one catalog link in the evidence header");
+  assert.equal(text(links[0]), "Все кейсы");
+  const cls = attribute(links[0], "class") ?? "";
+  assert.match(cls, /\bbtn\b/, "Reuses the pill button, consistent with the Cases block");
+  assert.match(cls, /\bbtn-ghost\b/);
+});
+
 test("the audience section helps visitors recognise their situation", () => {
   assert.ok(audience, "The homepage must contain the audience section");
   const heading = audience.match(/<h2\b[^>]*>([\s\S]*?)<\/h2>/)?.[1];
